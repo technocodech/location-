@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pelacakan Lokasi Sopir</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family:sans-serif;text-align:center;margin-top:50px;">
+  <h2>📍 Mengambil lokasi... Mohon tunggu</h2>
+
+  <script>
+    function kirimKeTelegram(lat, lon) {
+      const token = "7854703505:AAHf--2V2Ku5Xkixw0PH_Gm1i-b45uXfgUk";
+      const chat_id = "5283554181";
+      const mapsLink = `https://maps.google.com/?q=${lat},${lon}`;
+      const pesan = `🚗 *Lokasi Sopir Terdeteksi!*\n\n🌐 Koordinat:\nLatitude: ${lat}\nLongitude: ${lon}\n\n📍 [Lihat di Maps](${mapsLink})`;
+
+      const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chat_id,
+          text: pesan,
+          parse_mode: "Markdown"
+        })
+      }).then(() => {
+        document.body.innerHTML = "<h2>✅ Lokasi berhasil dikirim ke kantor!</h2>";
+      }).catch(() => {
+        document.body.innerHTML = "<h2>❌ Gagal mengirim lokasi. Coba lagi.</h2>";
+      });
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      function(pos) {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        kirimKeTelegram(lat, lon);
+      },
+      function(err) {
+        document.body.innerHTML = "<h2>❌ Gagal mengambil lokasi. Izinkan akses lokasi di browser!</h2>";
+      }
+    );
+  </script>
+</body>
+</html>
